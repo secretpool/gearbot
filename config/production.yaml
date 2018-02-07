@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Config
+clusters:
+- name: "production"
+  cluster:
+    server: "https://rancher.secretpool.org/k8s/clusters/cluster-6kqss"
+    insecure-skip-tls-verify: true
+    api-version: v1
+
+users:
+- name: "admin"
+  user:
+    token: "token-gwzlz:7drwhl7l67hfvtn5bk75wznkbkvp7zkrjnhpjpg8jpb6ttgx556sz5"
+
+contexts:
+- name: "production"
+  context:
+    user: "admin"
+    cluster: "production"
+
+current-context: "production"

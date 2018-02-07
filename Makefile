@@ -26,7 +26,7 @@ export RANCHER_URL 	      := $(RANCHER_URL)
 export RANCHER_ACCESS_KEY := $(RANCHER_ACCESS_KEY)
 export RANCHER_SECRET_KEY := $(RANCHER_SECRET_KEY)
 
-all: run
+all: deploy
 
 login:
 	docker login r.secretpool.org
@@ -37,6 +37,10 @@ build:
 	docker push r.secretpool.org/admin/gearbot:latest
 
 run: build
+	kubectl run gearbot --image=r.secretpool.org/admin/gearbot:latest
+
+deploy: build
+	kubectl set image deployment/gearbot gearbot=r.secretpool.org/admin/gearbot:latest
 
 logs:
-	docker logs pkr-api -f
+	kubectl logs deployment/gearbot -f

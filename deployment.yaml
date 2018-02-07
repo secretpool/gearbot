@@ -1,0 +1,17 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: gearbot-deployment
+spec:
+  selector:
+    matchLabels:
+      app: gearbot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gearbot
+    spec:
+      containers:
+      - name: gearbot
+        image: r.secretpool.org/gearbot:latest

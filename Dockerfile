@@ -1,8 +1,8 @@
-FROM python:2
-
-ADD notify.py /
+FROM python
 
 RUN pip install praw
 RUN pip install requests
 
-CMD [ "python", "./notify.py" ]
+COPY notify.py .
+
+CMD python -u notify.py

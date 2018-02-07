@@ -39,10 +39,10 @@ def notify(post):
             'text': ':fire: <' + post.url +  '|' + post.title + '> :fire:',
         }), headers={'Content-Type': 'application/json'})
     if res.status_code != 200:
-        print res.text
+        print(res.text)
 
 while True:
-    print 'checking for submissions...'
+    print('checking for submissions...')
     submissions = list(reddit.subreddit('buildapcsales').new(limit=10))
 
     for post in submissions:
@@ -51,12 +51,12 @@ while True:
 
         seen.add(post.id)
 
-        print post.title, post.permalink
-        print post.url, '\n'
+        print(post.title, post.permalink)
+        print(post.url, '\n')
         notify(post)
 
     with open('db.json', 'w') as f:
         json.dump(list(seen), f)
 
-    print 'sleeping for 60 seconds...'
+    print('sleeping for 60 seconds...')
     time.sleep(60)

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gearbot
+spec:
+  containers:
+  - name: gearbot
+    image: r.secretpool.org/admin/gearbot:latest
+  imagePullSecrets:
+  - name: r.secretpool.org

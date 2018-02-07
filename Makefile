@@ -36,17 +36,17 @@ build:
 	docker tag gearbot:latest r.secretpool.org/admin/gearbot:latest
 	docker push r.secretpool.org/admin/gearbot:latest
 
-run: build
-	kubectl apply -f deployment.yaml
+create: build
+	kubectl create -f pod.yaml
 
 deploy: build
-	kubectl set image deployment/gearbot gearbot=r.secretpool.org/admin/gearbot:latest
+	kubectl apply -f pod.yaml
 
 delete:
-	kubectl delete deployment/gearbot
+	kubectl delete gearbot
 
 status:
-	kubectl get deployment gearbot -o yaml
+	kubectl get pod gearbot -o yaml
 
 create-secret:
 	kubectl create secret docker-registry r.secretpool.org \
@@ -56,4 +56,7 @@ create-secret:
 		--docker-email=admin@secretpool.org
 
 logs:
-	kubectl logs deployment/gearbot -f
+	kubectl logs gearbot -f
+
+ssh:
+	kubectl exec -it gearbot -- /bin/bash

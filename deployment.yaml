@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: gearbot-deployment
+  name: gearbot
 spec:
   selector:
     matchLabels:
@@ -14,4 +14,6 @@ spec:
     spec:
       containers:
       - name: gearbot
-        image: r.secretpool.org/gearbot:latest
+        image: r.secretpool.org/admin/gearbot:latest
+      imagePullSecrets:
+      - name: r.secretpool.org

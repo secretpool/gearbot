@@ -37,10 +37,23 @@ build:
 	docker push r.secretpool.org/admin/gearbot:latest
 
 run: build
-	kubectl run gearbot --image=r.secretpool.org/admin/gearbot:latest
+	kubectl apply -f deployment.yaml
 
 deploy: build
 	kubectl set image deployment/gearbot gearbot=r.secretpool.org/admin/gearbot:latest
+
+delete:
+	kubectl delete deployment/gearbot
+
+status:
+	kubectl get deployment gearbot -o yaml
+
+create-secret:
+	kubectl create secret docker-registry r.secretpool.org \
+		--docker-server=r.secretpool.org \
+		--docker-username=admin \
+		--docker-password='wMl2?5VgSuEaVCbC' \
+		--docker-email=admin@secretpool.org
 
 logs:
 	kubectl logs deployment/gearbot -f

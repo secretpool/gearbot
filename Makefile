@@ -1,4 +1,4 @@
-# export KUBECONFIG=config/production.yaml
+export KUBECONFIG=config/gke.yaml
 
 all: deploy
 

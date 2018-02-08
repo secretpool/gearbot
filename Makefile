@@ -1,4 +1,4 @@
-export KUBECONFIG=config/gke.yaml
+export KUBECONFIG=config/do.yaml
 
 all: deploy
 

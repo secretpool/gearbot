@@ -6,4 +6,3 @@ spec:
   containers:
   - name: gearbot
     image: gcr.io/secret-pool/gearbot:latest
-    imagePullPolicy: Always

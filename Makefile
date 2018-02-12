@@ -13,7 +13,8 @@ create: build
 delete:
 	kubectl delete -f pod.yaml
 
-deploy: delete create
+deploy: build
+	kubectl apply -f pod.yaml
 
 status:
 	kubectl get pod gearbot -o yaml

@@ -18,14 +18,25 @@ if os.path.exists('db.json'):
 seen_lock = threading.Lock()
 
 
-# Notify Slack + Discord
-def notify(url, title):
+# Notify Slack
+def notify_slack(url, title):
     print(url + ' | ' + title)
     res = requests.post('https://hooks.slack.com/services/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',
         data=json.dumps({
             'username': 'gearbot',
             'icon_emoji': ':moneybag:',
-            'text': ':fire: <' + url +  '|' + title + '> :fire:',
+            'text': ':fire: <' + url + '|' + title + '> :fire:',
+        }), headers={'Content-Type': 'application/json'})
+    if res.status_code != 200:
+        print(res.text)
+
+
+# Notify Discord
+def notify_discord(url, title):
+    res = requests.post('https://discordapp.com/api/webhooks/412711420401287198/6qOmbi0Ri1zW04JX5wYxNqsMDbvVCInl7SFBJpCA9WOnajBNtMRli4glcKEPYAlGWItM',
+        data=json.dumps({
+            'username': 'gearbot',
+            'content': ':fire:' + title + ':fire:\n' + url,
         }), headers={'Content-Type': 'application/json'})
     if res.status_code != 200:
         print(res.text)
@@ -73,7 +84,8 @@ def reddit():
 
             print(post.title, post.permalink)
             print(post.url, '\n')
-            notify(post.url, post.title)
+            notify_slack(post.url, post.title)
+            notify_discord(post.url, post.title)
 
         print('sleeping for 10 seconds...')
         time.sleep(10)
@@ -154,63 +166,62 @@ def email_():
         if not responses:
             continue
 
-        for response in responses:
-
-            if len(response) < 2:
-                print("Reponse too short")
-                print(response)
-                continue
-
-            if response[1] != b'EXISTS' and response[1] != b'FETCH':
-                print("Response with invalid type")
-                print(response[1])
-                continue
-
+        try:
             messages = mail.search(['UNSEEN'])
+        except Exception as err:
+            print(err)
+            print('search had an issue, continuing')
+            continue
 
-            print('messages')
-            print(messages)
+        print('messages')
+        print(messages)
 
+        try:
             items = mail.fetch(messages, ['ENVELOPE', 'RFC822']).items()
+        except Exception as err:
+            print(err)
+            print('fetch had an issue, continuing')
+            continue
 
-            for uid, data in items:
-                try:
-                    print('UID')
-                    print(uid)
+        for uid, data in items:
+            try:
+                print('UID')
+                print(uid)
 
-                    id = 'email' + str(uid)
+                id = 'email' + str(uid)
 
-                    mail.set_flags([uid], SEEN)
+                mail.set_flags([uid], SEEN)
 
-                    envelope = data[b'ENVELOPE']
-                    host = envelope.sender[0].host.decode()
-                    if reject_email(id, host):
-                        continue
+                envelope = data[b'ENVELOPE']
+                host = envelope.sender[0].host.decode()
+                if reject_email(id, host):
+                    continue
 
-                    message = email.message_from_bytes(data[b'RFC822'])
+                message = email.message_from_bytes(data[b'RFC822'])
 
-                    text = ''
-                    if message.is_multipart():
-                        for payload in message.get_payload():
-                            text += payload.get_payload()
-                    else:
-                        text = message.get_payload()
+                text = ''
+                if message.is_multipart():
+                    for payload in message.get_payload():
+                        text += payload.get_payload()
+                else:
+                    text = message.get_payload()
 
-                    url = ''
-                    title = ''
-                    if host == 'nowinstock.net':
-                        [url, title] = format_nowinstock_email(text)
-                    elif host == 'blockchainrigs.io':
-                        [url, title] = format_blockchainrigs_email(text)
-                    else:
-                        print('Host not recognized: ' + host)
+                url = ''
+                title = ''
+                if host == 'nowinstock.net':
+                    [url, title] = format_nowinstock_email(text)
+                elif host == 'blockchainrigs.io':
+                    [url, title] = format_blockchainrigs_email(text)
+                else:
+                    print('Host not recognized: ' + host)
 
-                    if url and title:
-                        notify(url, title)
-                    else:
-                        print('Could not decode email')
-                except Exception as err:
-                    print(err)
+                if url and title:
+                    notify_slack(url, title)
+                    notify_discord(url, title)
+                else:
+                    print('Could not decode email')
+            except Exception as err:
+                print(err)
 
 
 if __name__ == '__main__':
@@ -223,4 +234,5 @@ if __name__ == '__main__':
     while True:
         with open('db.json', 'w') as f:
             json.dump(list(seen), f)
-            time.sleep(10)
+            time.sleep(30)
+

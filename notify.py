@@ -96,8 +96,8 @@ def reject_email(id, host):
 
 
 def format_blockchainrigs_email(msg):
-    msg = msg.replace('\n', '').replace('\r', '')
-    match = re.search(r'In stock: (.*?)Buy Link : BUY<(.*?)>', msg, re.MULTILINE)
+    msg = msg.replace('=\r\n', '').replace('<br>', '').replace('=3D', '=')
+    match = re.search(r"^In stock: (.*?) Buy Link : <a href='(.*?)'>", msg, re.MULTILINE)
 
     if not match:
         return ['', '']
@@ -106,8 +106,8 @@ def format_blockchainrigs_email(msg):
 
 
 def format_nowinstock_email(msg):
-    msg = msg.replace('\n', '').replace('\r', '')
-    match = re.search(r'(.*?). Goto:(.*?)STOP', msg, re.MULTILINE)
+    msg = msg.replace('=\r\n', '').replace('<br>', '').replace('=3D', '=')
+    match = re.search(r'^(.*?). Goto: (.*)/', msg, re.MULTILINE)
 
     if not match:
         return ['', '']
@@ -128,7 +128,6 @@ def email_():
     idle_mail.select_folder('inbox')
     idle_mail.idle()
 
-    # non-idle client
     mail = IMAPClient(SMTP_SERVER, use_uid=True)
     mail.login(FROM_EMAIL, FROM_PWD)
     mail.select_folder('inbox')
@@ -140,79 +139,76 @@ def email_():
 
         if time.time() - old_time > 599:
             idle_mail.idle_done()
-            idle_mail.logout()
-
-            idle_mail = IMAPClient(SMTP_SERVER, use_uid=True)
-            idle_mail.login(FROM_EMAIL, FROM_PWD)
-            idle_mail.select_folder('inbox')
             idle_mail.idle()
-
-            mail.logout()
-
-            mail = IMAPClient(SMTP_SERVER, use_uid=True)
-            mail.login(FROM_EMAIL, FROM_PWD)
-            mail.select_folder('inbox')
 
             old_time = time.time()
 
         try:
             responses = idle_mail.idle_check(timeout=10)
         except Exception as err:
+            print(err)
             print('idle_mail had an issue, continuing')
+            continue
+
+        if not responses:
             continue
 
         for response in responses:
             print('Server sent:', response if response else 'nothing')
 
-            if response[1] != b'EXISTS':
-                continue
+            # if response[1] != b'EXISTS':
+            #     continue
 
             uuid = response[0]
 
             print('UUID exists: ' + str(uuid))
 
-            for msg_id, data in mail.fetch([uuid], ['ENVELOPE', 'RFC822']).items():
-                print('MSG ID')
-                print(msg_id)
+            for msg_id, data in mail.fetch([uuid + 1], ['ENVELOPE', 'RFC822']).items():
+                try:
+                    print('MSG ID')
+                    print(msg_id)
 
-                id = 'email' + str(uuid)
+                    id = 'email' + str(uuid)
 
-                envelope = data[b'ENVELOPE']
-                host = envelope.sender[0].host.decode()
-                if reject_email(id, host):
-                    continue
+                    envelope = data[b'ENVELOPE']
+                    host = envelope.sender[0].host.decode()
+                    if reject_email(id, host):
+                        continue
 
-                message = email.message_from_bytes(data[b'RFC822'])
+                    message = email.message_from_bytes(data[b'RFC822'])
 
-                text = ''
-                if message.is_multipart():
-                    for payload in message.get_payload():
-                        text += payload.get_payload()
-                else:
-                    text = message.get_payload()
+                    text = ''
+                    if message.is_multipart():
+                        for payload in message.get_payload():
+                            text += payload.get_payload()
+                    else:
+                        text = message.get_payload()
 
-                url = ''
-                title = ''
-                if host == 'nowinstock.net':
-                    [url, title] = format_nowinstock_email(text)
-                elif True or host == 'blockchainrigs.io':
-                    [url, title] = format_blockchainrigs_email(text)
-                else:
-                    print('Host not recognized: ' + host)
+                    url = ''
+                    title = ''
+                    if host == 'nowinstock.net':
+                        [url, title] = format_nowinstock_email(text)
+                    elif True or host == 'blockchainrigs.io':
+                        [url, title] = format_blockchainrigs_email(text)
+                    else:
+                        print('Host not recognized: ' + host)
 
-                if url and title:
-                    notify(url, title)
-                else:
-                    print('Could not decode email')
+                    if url and title:
+                        notify(url, title)
+                    else:
+                        print('Could not decode email')
+                except Exception as err:
+                    print(err)
 
 
-reddit_thread = threading.Thread(target=reddit)
-reddit_thread.start()
+if __name__ == '__main__':
+    reddit_thread = threading.Thread(target=reddit)
+    reddit_thread.start()
 
-email_thread = threading.Thread(target=email_)
-email_thread.start()
+    email_thread = threading.Thread(target=email_)
+    email_thread.start()
 
-while True:
-    with open('db.json', 'w') as f:
-        json.dump(list(seen), f)
-        time.sleep(10)
+    while True:
+        with open('db.json', 'w') as f:
+            json.dump(list(seen), f)
+            time.sleep(10)

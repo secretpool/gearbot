@@ -135,7 +135,7 @@ def email_():
     # idle client
     idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
     idle_mail.login(FROM_EMAIL, FROM_PWD)
-    idle_mail.select_folder('inbox')
+    idle_mail.select_folder('INBOX')
     idle_mail.idle()
 
     mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
@@ -166,7 +166,12 @@ def email_():
         if not responses:
             continue
 
+        # this is needed to force refresh
+        mail.fetch([1], ['RFC822'])
+
         try:
+            # this is needed to force refresh
+            mail.fetch([1], ['RFC822'])
             messages = mail.search(['UNSEEN'])
         except Exception as err:
             print(err)

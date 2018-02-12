@@ -9,7 +9,7 @@ import os
 import email
 import re
 
-print('version', 2)
+print('version', 3)
 
 # Seen db
 seen = set()

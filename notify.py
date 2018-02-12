@@ -1,4 +1,4 @@
-from imapclient import IMAPClient
+from imapclient import IMAPClient, SEEN
 
 import requests
 import threading
@@ -166,22 +166,21 @@ def email_():
                 print(response[1])
                 continue
 
-            uid = response[0]
+            messages = mail.search(['UNSEEN'])
 
-            print('UID')
-            print(uid)
+            print('messages')
+            print(messages)
 
-            items = mail.fetch([uid + 1], ['ENVELOPE', 'RFC822']).items()
+            items = mail.fetch(messages, ['ENVELOPE', 'RFC822']).items()
 
-            print('ITEMS')
-            print(items)
-
-            for msg_id, data in items:
+            for uid, data in items:
                 try:
-                    print('MSG ID')
-                    print(msg_id)
+                    print('UID')
+                    print(uid)
 
                     id = 'email' + str(uid)
+
+                    mail.set_flags([uid], SEEN)
 
                     envelope = data[b'ENVELOPE']
                     host = envelope.sender[0].host.decode()

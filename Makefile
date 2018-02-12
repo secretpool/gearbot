@@ -10,11 +10,10 @@ build:
 create: build
 	kubectl create -f pod.yaml
 
-deploy: build
-	kubectl apply -f pod.yaml
+delete: delete
+	kubectl delete -f pod.yaml
 
-delete:
-	kubectl delete gearbot
+deploy: delete create
 
 status:
 	kubectl get pod gearbot -o yaml

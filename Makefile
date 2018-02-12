@@ -1,11 +1,12 @@
 export KUBECONFIG=config/gke.yaml
+export GIT_SHA=$(shell git rev-parse --short=8 HEAD)
 
 all: deploy
 
 build:
-	docker build . -t gearbot:latest
-	docker tag gearbot:latest gcr.io/secret-pool/gearbot:latest
-	gcloud docker -- push gcr.io/secret-pool/gearbot:latest
+	docker build . -t gearbot:$(GIT_SHA)
+	docker tag gearbot:$(GIT_SHA) gcr.io/secret-pool/gearbot:$(GIT_SHA)
+	gcloud docker -- push gcr.io/secret-pool/gearbot:$(GIT_SHA)
 
 create: build
 	kubectl create -f pod.yaml
@@ -14,7 +15,7 @@ delete:
 	kubectl delete -f pod.yaml
 
 deploy: build
-	kubectl apply -f pod.yaml
+	kubectl set image -f pod.yaml gearbot=gearbot:$(GIT_SHA)
 
 status:
 	kubectl get pod gearbot -o yaml

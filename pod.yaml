@@ -5,4 +5,4 @@ metadata:
 spec:
   containers:
   - name: gearbot
-    image: gcr.io/secret-pool/gearbot:latest
+    image: gcr.io/secret-pool/gearbot

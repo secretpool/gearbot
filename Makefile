@@ -10,7 +10,7 @@ build:
 create: build
 	kubectl create -f pod.yaml
 
-delete: delete
+delete:
 	kubectl delete -f pod.yaml
 
 deploy: delete create

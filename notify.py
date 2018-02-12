@@ -144,7 +144,7 @@ def email_():
             old_time = time.time()
 
         try:
-            responses = idle_mail.idle_check(timeout=10)
+            responses = idle_mail.idle_check(timeout=30)
         except Exception as err:
             print(err)
             print('idle_mail had an issue, continuing')
@@ -165,8 +165,8 @@ def email_():
 
             for msg_id, data in mail.fetch([uuid + 1], ['ENVELOPE', 'RFC822']).items():
                 try:
-                    print('MSG ID')
-                    print(msg_id)
+                    # print('MSG ID')
+                    # print(msg_id)
 
                     id = 'email' + str(uuid)
 
@@ -188,7 +188,7 @@ def email_():
                     title = ''
                     if host == 'nowinstock.net':
                         [url, title] = format_nowinstock_email(text)
-                    elif True or host == 'blockchainrigs.io':
+                    elif host == 'blockchainrigs.io':
                         [url, title] = format_blockchainrigs_email(text)
                     else:
                         print('Host not recognized: ' + host)

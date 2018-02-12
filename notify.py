@@ -121,12 +121,12 @@ def email_():
 
     # Set up email api
     # idle client
-    idle_mail = IMAPClient(SMTP_SERVER, use_uid=True)
+    idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, use_ssl=True)
     idle_mail.login(FROM_EMAIL, FROM_PWD)
     idle_mail.select_folder('inbox')
     idle_mail.idle()
 
-    mail = IMAPClient(SMTP_SERVER, use_uid=True)
+    mail = IMAPClient(SMTP_SERVER, use_uid=True, use_ssl=True)
     mail.login(FROM_EMAIL, FROM_PWD)
     mail.select_folder('inbox')
 
@@ -156,14 +156,22 @@ def email_():
 
         for response in responses:
 
-            # if response[1] != b'EXISTS':
-            #     continue
+            if len(response) < 2:
+                print("Reponse too short")
+                print(response)
+                continue
 
-            uuid = response[0]
+            if response[1] != b'EXISTS' and response[1] != b'FETCH':
+                print("Response with invalid type")
+                print(response[1])
+                continue
 
-            print('UUID exists: ' + str(uuid))
+            uid = response[0]
 
-            items = mail.fetch([uuid + 1], ['ENVELOPE', 'RFC822']).items()
+            print('UID')
+            print(uid)
+
+            items = mail.fetch([uid + 1], ['ENVELOPE', 'RFC822']).items()
 
             print('ITEMS')
             print(items)
@@ -173,7 +181,7 @@ def email_():
                     print('MSG ID')
                     print(msg_id)
 
-                    id = 'email' + str(uuid)
+                    id = 'email' + str(uid)
 
                     envelope = data[b'ENVELOPE']
                     host = envelope.sender[0].host.decode()

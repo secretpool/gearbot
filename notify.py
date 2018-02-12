@@ -137,14 +137,15 @@ def email_():
     while True:
         print('checking for emails...')
 
+        responses = []
         if time.time() - old_time > 599:
-            idle_mail.idle_done()
+            responses.extend(idle_mail.idle_done())
             idle_mail.idle()
 
             old_time = time.time()
 
         try:
-            responses = idle_mail.idle_check(timeout=30)
+            responses.extend(idle_mail.idle_check(timeout=30))
         except Exception as err:
             print(err)
             print('idle_mail had an issue, continuing')
@@ -154,7 +155,7 @@ def email_():
             continue
 
         for response in responses:
-            print('Server sent:', response if response else 'nothing')
+            print('Server sent:', response)
 
             # if response[1] != b'EXISTS':
             #     continue

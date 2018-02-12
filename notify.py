@@ -84,8 +84,6 @@ def reject_email(id, host):
     if id in seen:
         return True
 
-    return False
-
     if host == 'nowinstock.net':
         return False
 
@@ -151,11 +149,12 @@ def email_():
             print('idle_mail had an issue, continuing')
             continue
 
+        print('Server sent:', responses or 'nothing')
+
         if not responses:
             continue
 
         for response in responses:
-            print('Server sent:', response)
 
             # if response[1] != b'EXISTS':
             #     continue

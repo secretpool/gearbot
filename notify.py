@@ -9,8 +9,6 @@ import os
 import email
 import re
 
-print('version', 4)
-
 # Seen db
 seen = set()
 if os.path.exists('db.json'):

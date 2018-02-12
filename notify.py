@@ -163,10 +163,15 @@ def email_():
 
             print('UUID exists: ' + str(uuid))
 
-            for msg_id, data in mail.fetch([uuid + 1], ['ENVELOPE', 'RFC822']).items():
+            items = mail.fetch([uuid + 1], ['ENVELOPE', 'RFC822']).items()
+
+            print('ITEMS')
+            print(items)
+
+            for msg_id, data in items:
                 try:
-                    # print('MSG ID')
-                    # print(msg_id)
+                    print('MSG ID')
+                    print(msg_id)
 
                     id = 'email' + str(uuid)
 

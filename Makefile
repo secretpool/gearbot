@@ -15,7 +15,7 @@ delete:
 	kubectl delete -f pod.yaml
 
 deploy: build
-	kubectl set image -f pod.yaml gearbot=gearbot:$(GIT_SHA)
+	kubectl set image -f pod.yaml gearbot=gcr.io/secret-pool/gearbot:$(GIT_SHA)
 
 status:
 	kubectl get pod gearbot -o yaml

@@ -121,12 +121,12 @@ def email_():
 
     # Set up email api
     # idle client
-    idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, use_ssl=True)
+    idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
     idle_mail.login(FROM_EMAIL, FROM_PWD)
     idle_mail.select_folder('inbox')
     idle_mail.idle()
 
-    mail = IMAPClient(SMTP_SERVER, use_uid=True, use_ssl=True)
+    mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
     mail.login(FROM_EMAIL, FROM_PWD)
     mail.select_folder('inbox')
 

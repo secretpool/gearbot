@@ -55,6 +55,9 @@ def reject_reddit(id, title):
     if tag == '[MOBO]':
         return False
 
+    if tag == '[PSU':
+        return False
+
     return True
 
 

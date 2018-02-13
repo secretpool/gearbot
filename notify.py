@@ -152,7 +152,13 @@ def email_():
 
         responses = []
         if time.time() - old_time > 599:
-            responses.extend(idle_mail.idle_done())
+            try:
+                responses.extend(idle_mail.idle_done())
+            except Exception as err:
+                print(err)
+                print('idle_done had an issue, continuing')
+                continue
+
             idle_mail.idle()
 
             old_time = time.time()

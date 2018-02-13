@@ -106,7 +106,7 @@ def reject_email(id, host):
 
 
 def format_blockchainrigs_email(msg):
-    msg = msg.replace('=\r\n', '').replace('<br>', '').replace('=3D', '=')
+    msg = msg.replace('=\r\n', '').replace('\r\n', '').replace('<br>', '').replace('=3D', '=')
     match = re.search(r"^In stock: (.*?) Buy Link : <a href='(.*?)'>", msg, re.MULTILINE)
 
     if not match:
@@ -116,8 +116,8 @@ def format_blockchainrigs_email(msg):
 
 
 def format_nowinstock_email(msg):
-    msg = msg.replace('=\r\n', '').replace('<br>', '').replace('=3D', '=')
-    match = re.search(r'^(.*?). Goto: (.*)/', msg, re.MULTILINE)
+    msg = msg.replace('=\r\n', '').replace('\r\n', '').replace('<br>', '').replace('=3D', '=')
+    match = re.search(r'^(.*?). Goto: (.*?)NowInStock', msg, re.MULTILINE)
 
     if not match:
         return ['', '']

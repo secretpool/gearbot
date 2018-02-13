@@ -33,7 +33,7 @@ def notify_slack(url, title):
 
 # Notify Discord
 def notify_discord(url, title):
-    res = requests.post('https://discordapp.com/api/webhooks/412711420401287198/6qOmbi0Ri1zW04JX5wYxNqsMDbvVCInl7SFBJpCA9WOnajBNtMRli4glcKEPYAlGWItM',
+    res = requests.post('https://discordapp.com/api/webhooks/412776843805065216/GX5E7CZtDcF44K0ZlZHCg-C3xyJMQzPSXGrzYoJWvRXMREXHFuYxZF5Gpqs-h898BDo-',
         data=json.dumps({
             'username': 'gearbot',
             'content': ':fire:' + title + ':fire:\n' + url,

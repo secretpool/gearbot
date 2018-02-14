@@ -36,7 +36,7 @@ def notify_discord(url, title):
     res = requests.post('https://discordapp.com/api/webhooks/412776843805065216/GX5E7CZtDcF44K0ZlZHCg-C3xyJMQzPSXGrzYoJWvRXMREXHFuYxZF5Gpqs-h898BDo-',
         data=json.dumps({
             'username': 'gearbot',
-            'content': ':fire:' + title + ':fire:\n' + url,
+            'content': title + '\n' + url,
         }), headers={'Content-Type': 'application/json'})
     if res.status_code != 200:
         print(res.text)

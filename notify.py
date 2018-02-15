@@ -175,9 +175,6 @@ def email_():
         if not responses:
             continue
 
-        # this is needed to force refresh
-        mail.fetch([1], ['RFC822'])
-
         try:
             # this is needed to force refresh
             mail.fetch([1], ['RFC822'])

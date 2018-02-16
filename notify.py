@@ -157,10 +157,8 @@ def email_():
             except Exception as err:
                 print(err)
                 print('idle_done had an issue, continuing')
-                continue
 
             idle_mail.idle()
-
             old_time = time.time()
 
         try:

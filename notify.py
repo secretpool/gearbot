@@ -137,13 +137,21 @@ def email_():
     # Set up email api
     # idle client
     idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
-    idle_mail.login(FROM_EMAIL, FROM_PWD)
-    idle_mail.select_folder('INBOX')
-    idle_mail.idle()
-
     mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
-    mail.login(FROM_EMAIL, FROM_PWD)
-    mail.select_folder('inbox')
+
+    def reset_connection():
+        try:
+            idle_mail.login(FROM_EMAIL, FROM_PWD)
+            idle_mail.select_folder('INBOX')
+            idle_mail.idle()
+
+            mail.login(FROM_EMAIL, FROM_PWD)
+            mail.select_folder('inbox')
+        except Exception as err:
+            print(err)
+            reset_connection()
+
+    reset_connection()
 
     old_time = time.time()
 
@@ -158,7 +166,7 @@ def email_():
                 print(err)
                 print('idle_done had an issue, continuing')
 
-            idle_mail.idle()
+            reset_connection()
             old_time = time.time()
 
         try:

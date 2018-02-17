@@ -141,10 +141,12 @@ def email_():
 
     def reset_connection():
         try:
+            idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
             idle_mail.login(FROM_EMAIL, FROM_PWD)
             idle_mail.select_folder('INBOX')
             idle_mail.idle()
 
+i           mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
             mail.login(FROM_EMAIL, FROM_PWD)
             mail.select_folder('inbox')
         except Exception as err:

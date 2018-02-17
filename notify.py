@@ -136,17 +136,18 @@ def email_():
 
     # Set up email api
     # idle client
-    idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
-    mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
+
+    mail_clients = [None, None]
 
     def reset_connection():
         try:
-            idle_mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
+            print('resetting email connection')
+            idle_mail = mail_clients[0] = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
             idle_mail.login(FROM_EMAIL, FROM_PWD)
             idle_mail.select_folder('INBOX')
             idle_mail.idle()
 
-            mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
+            mail = mail_clients[1] = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
             mail.login(FROM_EMAIL, FROM_PWD)
             mail.select_folder('inbox')
         except Exception as err:
@@ -158,6 +159,9 @@ def email_():
     old_time = time.time()
 
     while True:
+        idle_mail = mail_clients[0]
+        mail = mail_clients[1]
+
         print('checking for emails...')
 
         responses = []
@@ -244,8 +248,8 @@ def email_():
 
 
 if __name__ == '__main__':
-    reddit_thread = threading.Thread(target=reddit)
-    reddit_thread.start()
+    # reddit_thread = threading.Thread(target=reddit)
+    # reddit_thread.start()
 
     email_thread = threading.Thread(target=email_)
     email_thread.start()

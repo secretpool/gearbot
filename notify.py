@@ -146,7 +146,7 @@ def email_():
             idle_mail.select_folder('INBOX')
             idle_mail.idle()
 
-i           mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
+            mail = IMAPClient(SMTP_SERVER, use_uid=True, ssl=True)
             mail.login(FROM_EMAIL, FROM_PWD)
             mail.select_folder('inbox')
         except Exception as err:

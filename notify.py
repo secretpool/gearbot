@@ -252,8 +252,8 @@ def email_():
 
 
 if __name__ == '__main__':
-    # reddit_thread = threading.Thread(target=reddit)
-    # reddit_thread.start()
+    reddit_thread = threading.Thread(target=reddit)
+    reddit_thread.start()
 
     email_thread = threading.Thread(target=email_)
     email_thread.start()

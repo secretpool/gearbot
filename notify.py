@@ -72,7 +72,11 @@ def reddit():
     while True:
         # Reddit Posts
         print('checking for submissions...')
-        submissions = list(reddit.subreddit('buildapcsales').new(limit=10))
+        try:
+            submissions = list(reddit.subreddit('buildapcsales').new(limit=10))
+        except Exception as err:
+            print(err)
+            continue
 
         for post in submissions:
             id = 'reddit' + post.id
